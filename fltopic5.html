@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flashcards Vocabulary</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <button class="back-button" id="backBtn">Back</button>
+      <h1>Flashcards Vocabulary</h1>
+    </header>
+    <div class="content">
+      <div class="position-indicator" id="positionIndicator">Card 1 of 5</div>
+      <div class="flashcard-container">
+        <div class="flashcard" id="flashcard">
+          <div class="front">
+            Hello
+            <button class="speak-button" id="speakBtn">🔊</button>
+          </div>
+          <div class="back">Xin chào</div>
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="button" id="prevBtn">← Previous</button>
+        <button class="button" id="nextBtn">Next →</button>
+      </div>
+    </div>
+    <script>
+      // JavaScript Logic
+      const flashcard = document.getElementById("flashcard");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const backBtn = document.getElementById("backBtn");
+      const speakBtn = document.getElementById("speakBtn");
+      const positionIndicator = document.getElementById("positionIndicator");
+
+      // Vocabulary data
+      const vocabulary = [
+        { english: "Cuisine", vietnamese: "Ẩm thực (cách nấu nướng)" },
+        { english: "Dish", vietnamese: "Món ăn" },
+        { english: "Meal", vietnamese: "Bữa ăn" },
+        { english: "Ready meal", vietnamese: "Đồ ăn sẵn" },
+        { english: "Processed food", vietnamese: "Đồ ăn chế biến sẵn" },
+        { english: "Convenience food", vietnamese: "Đồ ăn liền" },
+        { english: "Home-cooked meal", vietnamese: "Bữa ăn nấu tại nhà" },
+        { english: "Slap-up meal", vietnamese: "Bữa ăn thịnh soạn" },
+        { english: "Gourmet meal", vietnamese: "Bữa ăn ngon" },
+        { english: "Light meal", vietnamese: "Bữa ăn nhẹ" },
+        { english: "Heavy meal", vietnamese: "Bữa ăn chính" },
+        { english: "Grab a bite", vietnamese: "Kiếm cái gì đó ăn nhanh" },
+        { english: "Have a quick snack", vietnamese: "Ăn lót dạ" },
+        {
+          english: "Work up an appetite",
+          vietnamese: "Làm tăng cảm giác thèm ăn",
+        },
+        { english: "Scarf something down", vietnamese: "Ăn vội" },
+        { english: "Eat like a horse", vietnamese: "Ăn nhiều" },
+        {
+          english: "Eat a balanced diet",
+          vietnamese: "Ăn theo chế độ dinh dưỡng hợp lý",
+        },
+        { english: "Be on a strict diet", vietnamese: "Ăn kiêng" },
+        { english: "Wine and dine", vietnamese: "Thiết đãi (đồ ngon và đắt)" },
+        { english: "Follow the Keto diet", vietnamese: "Ăn theo chế độ Keto" },
+        {
+          english: "Have a cheat day",
+          vietnamese: "Ăn tự do (không theo chế độ kiêng)",
+        },
+        { english: "Have a sweet tooth", vietnamese: "Thích ăn đồ ngọt" },
+        { english: "Fussy eater", vietnamese: "Người kén ăn" },
+        { english: "Vegetarian", vietnamese: "Người ăn chay" },
+        { english: "Sweet", vietnamese: "Ngọt" },
+        { english: "Salty", vietnamese: "Mặn" },
+        { english: "Savory", vietnamese: "Hương vị gắt (không dịu ngọt)" },
+        { english: "Sour", vietnamese: "Chua" },
+        { english: "Spicy", vietnamese: "Cay" },
+        { english: "Bitter", vietnamese: "Đắng" },
+        { english: "Creamy", vietnamese: "Nhiều kem, mịn (như kem)" },
+        { english: "Crunchy", vietnamese: "Giòn, rụm" },
+        { english: "Crumbly", vietnamese: "Dễ vỡ thành các mảnh nhỏ" },
+        { english: "Tender", vietnamese: "Mềm, dễ nhai" },
+        { english: "Gooey", vietnamese: "Mềm dẻo và dính" },
+        { english: "Mushy", vietnamese: "Mềm, nhừ (nấu quá lâu)" },
+        { english: "Greasy", vietnamese: "Dầu mỡ" },
+        { english: "Chewy", vietnamese: "Dẻo, dai" },
+        { english: "Juicy", vietnamese: "Mọng nước" },
+        { english: "Tasty", vietnamese: "Thơm ngon" },
+        { english: "Tasteless", vietnamese: "Nhạt nhẽo" },
+        { english: "Bland", vietnamese: "Nhạt nhẽo" },
+        { english: "Flavourful", vietnamese: "Đầy hương vị" },
+        { english: "Mouth-watering", vietnamese: "Có mùi thơm hoặc bắt mắt" },
+      ];
+
+      let currentIndex = 0;
+
+      function updateFlashcard() {
+        const { english, vietnamese } = vocabulary[currentIndex];
+        flashcard.querySelector(".front").textContent = english;
+        flashcard.querySelector(".back").textContent = vietnamese;
+        flashcard.querySelector(".front").appendChild(speakBtn); // Add the button to the front
+        positionIndicator.textContent = `Card ${currentIndex + 1} of ${
+          vocabulary.length
+        }`;
+      }
+
+      function playAudio(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+        speechSynthesis.speak(utterance);
+      }
+
+      speakBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent flipping when clicking the button
+        const englishWord = vocabulary[currentIndex].english;
+        playAudio(englishWord);
+      });
+
+      flashcard.addEventListener("click", () => {
+        flashcard.classList.toggle("is-flipped");
+      });
+
+      prevBtn.addEventListener("click", () => {
+        currentIndex =
+          (currentIndex - 1 + vocabulary.length) % vocabulary.length;
+        updateFlashcard();
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentIndex = (currentIndex + 1) % vocabulary.length;
+        updateFlashcard();
+      });
+
+      backBtn.addEventListener("click", () => {
+        window.history.back();
+      });
+
+      // Initialize the flashcard
+      updateFlashcard();
+    </script>
+  </body>
+</html>

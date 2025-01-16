@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flashcards Vocabulary</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <button class="back-button" id="backBtn">Back</button>
+      <h1>Flashcards Vocabulary</h1>
+    </header>
+    <div class="content">
+      <div class="position-indicator" id="positionIndicator">Card 1 of 5</div>
+      <div class="flashcard-container">
+        <div class="flashcard" id="flashcard">
+          <div class="front">
+            Hello
+            <button class="speak-button" id="speakBtn">🔊</button>
+          </div>
+          <div class="back">Xin chào</div>
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="button" id="prevBtn">← Previous</button>
+        <button class="button" id="nextBtn">Next →</button>
+      </div>
+    </div>
+    <script>
+      // JavaScript Logic
+      const flashcard = document.getElementById("flashcard");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const backBtn = document.getElementById("backBtn");
+      const speakBtn = document.getElementById("speakBtn");
+      const positionIndicator = document.getElementById("positionIndicator");
+
+      // Vocabulary data
+      const vocabulary = [
+        { english: "Free-time activity", vietnamese: "Hoạt động giải trí" },
+        { english: "Leisure activity", vietnamese: "Hoạt động rảnh rỗi" },
+        { english: "Hobby", vietnamese: "Sở thích" },
+        { english: "Pastime", vietnamese: "Trò tiêu khiển" },
+        { english: "Watch TV", vietnamese: "Xem tivi" },
+        { english: "Read books", vietnamese: "Đọc sách" },
+        { english: "Cook", vietnamese: "Nấu ăn" },
+        { english: "Football", vietnamese: "Bóng đá" },
+        { english: "Basketball", vietnamese: "Bóng rổ" },
+        { english: "Badminton", vietnamese: "Cầu lông" },
+        { english: "Tennis", vietnamese: "Quần vợt" },
+        { english: "Gymnastics", vietnamese: "Thể dục dụng cụ" },
+        { english: "Yoga", vietnamese: "Yoga" },
+        { english: "Swimming", vietnamese: "Bơi lội" },
+        { english: "Climbing", vietnamese: "Leo núi" },
+        { english: "Jogging", vietnamese: "Chạy bộ" },
+        { english: "Hang out", vietnamese: "Đi chơi" },
+        { english: "Chill out", vietnamese: "Thư giãn" },
+        { english: "Relax", vietnamese: "Thư giãn" },
+        { english: "Go shopping", vietnamese: "Mua sắm" },
+        { english: "Take photos", vietnamese: "Chụp ảnh" },
+        {
+          english: "Have a knack for something",
+          vietnamese: "Có khả năng ..., biết cách làm ...",
+        },
+        { english: "Paint", vietnamese: "Vẽ" },
+        { english: "Knit", vietnamese: "Đan len" },
+        { english: "Write stories/a blog", vietnamese: "Viết truyện/blog" },
+        { english: "Play a musical instrument", vietnamese: "Chơi nhạc cụ" },
+        {
+          english: "Play sports with ball",
+          vietnamese: "Chơi thể thao với bóng (trò chơi cạnh tranh)",
+        },
+        {
+          english: "Go + activities ending in -ing",
+          vietnamese:
+            "Đi + các hoạt động kết thúc bằng -ing (thể dục/tập thể thao)",
+        },
+        {
+          english:
+            "Do + recreational activities or non-team sports that has no ball",
+          vietnamese: "Làm + hoạt động giải trí hoặc thể thao không có bóng",
+        },
+        { english: "Take up", vietnamese: "Bắt đầu làm gì" },
+        { english: "Have a go at", vietnamese: "Thử điều gì mới" },
+        { english: "Try my hand at", vietnamese: "Thử điều gì mới" },
+        { english: "Be fond of", vietnamese: "Ham mê, thích thú" },
+        { english: "Be into", vietnamese: "Đắm chìm vào" },
+        { english: "Be passionate about", vietnamese: "Đam mê" },
+        { english: "Have a thing for", vietnamese: "Rất thích" },
+        {
+          english: "Culture vulture",
+          vietnamese: "Người say mê văn hóa nghệ thuật",
+        },
+        { english: "Couch potato", vietnamese: "Người lười vận động" },
+        { english: "Sporty person", vietnamese: "Người đam mê thể thao" },
+        {
+          english: "Fitness fanatic",
+          vietnamese: "Người cuồng thể dục (giữ dáng)",
+        },
+        { english: "Outgoing person", vietnamese: "Người hướng ngoại" },
+        { english: "Unwind", vietnamese: "Nghỉ ngơi thư giãn" },
+        { english: "Disconnect", vietnamese: "Ngắt kết nối" },
+        { english: "Kickback", vietnamese: "Thư giãn" },
+        { english: "Let your hair down", vietnamese: "Thư giãn" },
+        { english: "Get into shape", vietnamese: "Lấy lại vóc dáng" },
+        { english: "Stay in shape", vietnamese: "Giữ dáng" },
+      ];
+
+      let currentIndex = 0;
+
+      function updateFlashcard() {
+        const { english, vietnamese } = vocabulary[currentIndex];
+        flashcard.querySelector(".front").textContent = english;
+        flashcard.querySelector(".back").textContent = vietnamese;
+        flashcard.querySelector(".front").appendChild(speakBtn); // Add the button to the front
+        positionIndicator.textContent = `Card ${currentIndex + 1} of ${
+          vocabulary.length
+        }`;
+      }
+
+      function playAudio(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+        speechSynthesis.speak(utterance);
+      }
+
+      speakBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent flipping when clicking the button
+        const englishWord = vocabulary[currentIndex].english;
+        playAudio(englishWord);
+      });
+
+      flashcard.addEventListener("click", () => {
+        flashcard.classList.toggle("is-flipped");
+      });
+
+      prevBtn.addEventListener("click", () => {
+        currentIndex =
+          (currentIndex - 1 + vocabulary.length) % vocabulary.length;
+        updateFlashcard();
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentIndex = (currentIndex + 1) % vocabulary.length;
+        updateFlashcard();
+      });
+
+      backBtn.addEventListener("click", () => {
+        window.history.back();
+      });
+
+      // Initialize the flashcard
+      updateFlashcard();
+    </script>
+  </body>
+</html>

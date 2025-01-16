@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flashcards Vocabulary</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <button class="back-button" id="backBtn">Back</button>
+      <h1>Flashcards Vocabulary</h1>
+    </header>
+    <div class="content">
+      <div class="position-indicator" id="positionIndicator">Card 1 of 5</div>
+      <div class="flashcard-container">
+        <div class="flashcard" id="flashcard">
+          <div class="front">
+            Hello
+            <button class="speak-button" id="speakBtn">🔊</button>
+          </div>
+          <div class="back">Xin chào</div>
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="button" id="prevBtn">← Previous</button>
+        <button class="button" id="nextBtn">Next →</button>
+      </div>
+    </div>
+    <script>
+      // JavaScript Logic
+      const flashcard = document.getElementById("flashcard");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const backBtn = document.getElementById("backBtn");
+      const speakBtn = document.getElementById("speakBtn");
+      const positionIndicator = document.getElementById("positionIndicator");
+
+      // Vocabulary data
+      const vocabulary = [
+        {
+          english: "Make a detailed plan",
+          vietnamese: "Lên kế hoạch chi tiết",
+        },
+        { english: "Travel agency", vietnamese: "Đại lý du lịch" },
+        { english: "Package tour", vietnamese: "Kỳ nghỉ trọn gói" },
+        { english: "Guided tour", vietnamese: "Chuyến đi có hướng dẫn viên" },
+        { english: "Independent tour", vietnamese: "Chuyến du lịch độc lập" },
+        { english: "Freedom tour", vietnamese: "Chuyến du lịch tự do" },
+        { english: "Make a reservation", vietnamese: "Đặt trước" },
+        { english: "Book + sth", vietnamese: "Đặt (phòng, vé,...)" },
+        { english: "Airline ticket", vietnamese: "Vé máy bay" },
+        { english: "One-way ticket", vietnamese: "Vé 1 chiều" },
+        { english: "Return ticket", vietnamese: "Vé khứ hồi" },
+        { english: "First-class ticket", vietnamese: "Vé hạng nhất" },
+        { english: "Economy ticket", vietnamese: "Vé phổ thông" },
+        { english: "Accommodation", vietnamese: "Nơi ở" },
+        {
+          english: "Hotel",
+          vietnamese: "Khách sạn (four-star hotel, five-star hotel,...)",
+        },
+        { english: "Hostel", vietnamese: "Nhà nghỉ" },
+        { english: "Homestay", vietnamese: "Nhà dân" },
+        { english: "Caravan", vietnamese: "Nhà di động trên xe" },
+        { english: "Suitcase", vietnamese: "Vali" },
+        { english: "Passport", vietnamese: "Hộ chiếu" },
+        { english: "Identification card", vietnamese: "CMND hay thẻ căn cước" },
+        { english: "Money", vietnamese: "Tiền" },
+        { english: "Cash", vietnamese: "Tiền mặt, gồm tiền xu và tiền giấy" },
+        { english: "Credit card", vietnamese: "Thẻ tín dụng" },
+        { english: "Sleep mask", vietnamese: "Đồ bịt mắt" },
+        { english: "Neck pillow", vietnamese: "Gối cổ" },
+        { english: "Medicine", vietnamese: "Thuốc" },
+        { english: "Sunscreen", vietnamese: "Kem chống nắng" },
+        { english: "Go on a day trip", vietnamese: "Du lịch trong ngày" },
+        { english: "Take a short break", vietnamese: "Kì nghỉ ngắn ngày" },
+        {
+          english: "Go on a cultural visit",
+          vietnamese: "Thăm các địa điểm về văn hóa",
+        },
+        { english: "Visit a beach resort", vietnamese: "Nghỉ dưỡng ở biển" },
+        { english: "Visit a water park", vietnamese: "Đi công viên nước" },
+        { english: "Visit a theme park", vietnamese: "Đi công viên chủ đề" },
+        {
+          english: "Stay with a host family",
+          vietnamese: "Ở cùng gia đình bản địa",
+        },
+        { english: "Go sightseeing", vietnamese: "Ngắm cảnh" },
+        {
+          english: "Visit tourist attraction",
+          vietnamese: "Thăm điểm du lịch nổi tiếng",
+        },
+        {
+          english: "Try local cuisine",
+          vietnamese: "Thưởng thức ẩm thực địa phương",
+        },
+        { english: "Buy souvenirs", vietnamese: "Mua đồ lưu niệm" },
+        {
+          english: "Buy local crafts",
+          vietnamese: "Mua đồ thủ công địa phương",
+        },
+        {
+          english: "Watch the sunset on the beach",
+          vietnamese: "Ngắm hoàng hôn trên biển",
+        },
+        { english: "Breathtaking view", vietnamese: "Cảnh đẹp đến nín thở" },
+        {
+          english: "Stunning landscape",
+          vietnamese: "Khung cảnh đẹp tuyệt vời",
+        },
+        { english: "Memorable experience", vietnamese: "Trải nghiệm đáng nhớ" },
+        { english: "Unforgettable trip", vietnamese: "Chuyến đi khó quên" },
+      ];
+
+      let currentIndex = 0;
+
+      function updateFlashcard() {
+        const { english, vietnamese } = vocabulary[currentIndex];
+        flashcard.querySelector(".front").textContent = english;
+        flashcard.querySelector(".back").textContent = vietnamese;
+        flashcard.querySelector(".front").appendChild(speakBtn); // Add the button to the front
+        positionIndicator.textContent = `Card ${currentIndex + 1} of ${
+          vocabulary.length
+        }`;
+      }
+
+      function playAudio(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+        speechSynthesis.speak(utterance);
+      }
+
+      speakBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent flipping when clicking the button
+        const englishWord = vocabulary[currentIndex].english;
+        playAudio(englishWord);
+      });
+
+      flashcard.addEventListener("click", () => {
+        flashcard.classList.toggle("is-flipped");
+      });
+
+      prevBtn.addEventListener("click", () => {
+        currentIndex =
+          (currentIndex - 1 + vocabulary.length) % vocabulary.length;
+        updateFlashcard();
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentIndex = (currentIndex + 1) % vocabulary.length;
+        updateFlashcard();
+      });
+
+      backBtn.addEventListener("click", () => {
+        window.history.back();
+      });
+
+      // Initialize the flashcard
+      updateFlashcard();
+    </script>
+  </body>
+</html>

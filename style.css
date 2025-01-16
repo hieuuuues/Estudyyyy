@@ -1,0 +1,172 @@
+/* Reset and base styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+/* Header styles */
+header {
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+/* Button styles */
+.back-button,
+.button {
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  border-radius: 10px; /* More rounded corners */
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.back-button:hover,
+.button:hover {
+  background-color: #003d80;
+}
+
+/* Content layout */
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 60px);
+  background-color: #fff;
+}
+
+/* Flashcard container */
+.flashcard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 500px;
+  height: 300px;
+  perspective: 1000px;
+  margin-bottom: 20px;
+}
+
+/* Flashcard styles */
+.flashcard {
+  width: 100%;
+  height: 100%;
+  background-color: #e0f7fa; /* Light blue background color */
+  border-radius: 20px; /* More rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateY(0deg);
+  transition: transform 0.6s;
+}
+
+.flashcard.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.flashcard .front,
+.flashcard .back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: bold;
+  padding: 20px;
+  box-sizing: border-box;
+  border-radius: 20px; /* More rounded corners */
+}
+
+.flashcard .back {
+  transform: rotateY(180deg);
+}
+
+/* Speak button */
+.speak-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 10px; /* More rounded corners */
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.speak-button:hover {
+  background-color: #1e7e34;
+}
+
+/* Position indicator */
+.position-indicator {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* Button container */
+.buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+  header {
+    padding: 10px;
+  }
+
+  header h1 {
+    font-size: 20px;
+  }
+
+  .flashcard-container {
+    width: 90%;
+    height: 250px;
+  }
+
+  .back-button,
+  .button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .speak-button {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+/* Additional touch optimizations for mobile */
+@media (hover: none) {
+  .back-button,
+  .button,
+  .speak-button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .back-button:active,
+  .button:active,
+  .speak-button:active {
+    transform: scale(0.98);
+  }
+}

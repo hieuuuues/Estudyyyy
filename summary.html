@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Summary of Results</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        padding: 20px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      .summary-container {
+        max-width: 900px;
+        margin: 20px auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .summary-container h1 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 30px;
+        font-size: 2.2em;
+        font-weight: 600;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 15px;
+      }
+
+      .lesson-summary {
+        margin-bottom: 30px;
+        padding: 20px;
+        border-radius: 12px;
+        background: #f8f9fa;
+        transition: transform 0.2s;
+      }
+
+      .lesson-summary:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .lesson-summary h3 {
+        margin-bottom: 15px;
+        color: #2c3e50;
+        font-size: 1.4em;
+        font-weight: 500;
+      }
+
+      .result-stats {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+      }
+
+      .stat-item {
+        text-align: center;
+        padding: 15px;
+        border-radius: 10px;
+        flex: 1;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .stat-item:hover {
+        transform: scale(1.05);
+      }
+
+      .stat-item.correct {
+        background: linear-gradient(145deg, #e8f5e9, #c8e6c9);
+        color: #2e7d32;
+        border: 1px solid #a5d6a7;
+      }
+
+      .stat-item.wrong {
+        background: linear-gradient(145deg, #ffebee, #ffcdd2);
+        color: #c62828;
+        border: 1px solid #ef9a9a;
+      }
+
+      .stat-item strong {
+        font-size: 1.8em;
+        display: block;
+        margin-top: 5px;
+      }
+
+      .performance-analysis {
+        margin-top: 30px;
+        padding: 20px;
+        border-radius: 12px;
+        background: #f8f9fa;
+      }
+
+      .percentage {
+        text-align: center;
+        font-size: 2em;
+        color: #2c3e50;
+        margin: 20px 0;
+        font-weight: bold;
+      }
+
+      .advice-container {
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        background: #fff;
+        border-left: 5px solid;
+      }
+
+      .advice-container.excellent {
+        border-color: #4caf50;
+        background: #f1f8e9;
+      }
+
+      .advice-container.good {
+        border-color: #2196f3;
+        background: #e3f2fd;
+      }
+
+      .advice-container.average {
+        border-color: #ff9800;
+        background: #fff3e0;
+      }
+
+      .advice-container.needs-improvement {
+        border-color: #f44336;
+        background: #ffebee;
+      }
+
+      .reset-button-container {
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .reset-button {
+        padding: 12px 25px;
+        background: linear-gradient(145deg, #ff5252, #f44336);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.1em;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .reset-button:hover {
+        background: linear-gradient(145deg, #f44336, #d32f2f);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 20px;
+        background: #eee;
+        border-radius: 10px;
+        margin: 20px 0;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.5s ease;
+        background: linear-gradient(90deg, #4caf50, #81c784);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="summary-container">
+      <h1>Summary of Results</h1>
+      <div id="summary-content"></div>
+      <div class="reset-button-container">
+        <button class="reset-button" id="resetButton">Reset Data</button>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const summaryContent = document.getElementById("summary-content");
+        const totalLessons = 5;
+        let totalCorrect = 0;
+        let totalWrong = 0;
+        let totalQuestions = 0;
+
+        for (let i = 1; i <= totalLessons; i++) {
+          const lessonResults = JSON.parse(
+            localStorage.getItem(`lesson${i}_results`) ||
+              '{"correct":0,"wrong":0}'
+          );
+          const correct = lessonResults.correct;
+          const wrong = lessonResults.wrong;
+          const total = correct + wrong;
+
+          totalCorrect += correct;
+          totalWrong += wrong;
+          totalQuestions += total;
+
+          const lessonDiv = document.createElement("div");
+          lessonDiv.className = "lesson-summary";
+          lessonDiv.innerHTML = `
+                    <h3>Lesson ${i}</h3>
+                    <div class="result-stats">
+                        <div class="stat-item correct">
+                            <div>Correct</div>
+                            <strong>${correct}</strong>
+                        </div>
+                        <div class="stat-item wrong">
+                            <div>Wrong</div>
+                            <strong>${wrong}</strong>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${
+                          total > 0 ? (correct / total) * 100 : 0
+                        }%"></div>
+                    </div>
+                `;
+          summaryContent.appendChild(lessonDiv);
+        }
+
+        const percentage =
+          totalQuestions > 0
+            ? ((totalCorrect / totalQuestions) * 100).toFixed(2)
+            : 0;
+
+        const performanceAnalysis = document.createElement("div");
+        performanceAnalysis.className = "performance-analysis";
+
+        const percentageDiv = document.createElement("div");
+        percentageDiv.className = "percentage";
+        percentageDiv.innerHTML = `
+                Overall Score: ${percentage}%
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${percentage}%"></div>
+                </div>
+            `;
+
+        const adviceDiv = document.createElement("div");
+        adviceDiv.className = `advice-container ${getAdviceClass(percentage)}`;
+        adviceDiv.innerHTML = getDetailedAdvice(percentage);
+
+        performanceAnalysis.appendChild(percentageDiv);
+        performanceAnalysis.appendChild(adviceDiv);
+        summaryContent.appendChild(performanceAnalysis);
+
+        function getAdviceClass(percentage) {
+          if (percentage >= 90) return "excellent";
+          if (percentage >= 75) return "good";
+          if (percentage >= 60) return "average";
+          return "needs-improvement";
+        }
+
+        function getDetailedAdvice(percentage) {
+          if (percentage >= 90) {
+            return `
+                      <h3>jkàbjkabfjkábjkfạkknf</h3>
+                        <p>jkàbjkabfjkábjkfạknạknf</p>
+                        <ul>
+                            <li>jkàbjkabfjkábjkfạknfjkàbkfạknf</li>
+                            <li>Fjkàbjkabfjkábjkfạknf</li>
+                            <li>jkàbjkabfkabjkfạknfy</li>
+                        </ul>
+                        <p>jkàbjkabfjkábjkfạknfjkábjkfạknf</p>
+                    `;
+          } else if (percentage >= 75) {
+            return `
+                        <h3>jkàbjkabfjkábjkfạkknf</h3>
+                        <p>jkàbjkabfjkábjkfạknạknf</p>
+                        <ul>
+                            <li>jkàbjkabfjkábjkfạknfjkàbkfạknf</li>
+                            <li>Fjkàbjkabfjkábjkfạknf</li>
+                            <li>jkàbjkabfjkábjkjkabjkfạknfy</li>
+                        </ul>
+                        <p>jkàbjkabfjkábjkfạknfjkábjkfạknf</p>
+                    `;
+          } else if (percentage >= 60) {
+            return `
+                        <h3>jkàbjkabfjkábjkfạkknf</h3>
+                        <p>jkàbjkabfjkábjkfạknạknf</p>
+                        <ul>
+                            <li>jkàbjkabfjkábjkfạknfjkàbkfạknf</li>
+                            <li>Fjkàbjkabfjkábjkfạknf</li>
+                            <li>jkàbjkabfjkfạknfy</li>
+                        </ul>
+                        <p>jkàbjkabfjkábjkfạknfjkábjkfạknf</p>
+                    `;
+          } else {
+            return `
+                        <h3>jkàbjkabfjkábjkfạkknf</h3>
+                        <p>jkàbjkabfjkábjkfạknạknf</p>
+                        <ul>
+                            <li>jkàbjkabfjkábjkfạknfjkàbkfạknf</li>
+                            <li>Fjkàbjkabfjkábjkfạknf</li>
+                            <li>jkàbjkabfjkjkfạknfy</li>
+                        </ul>
+                        <p>jkàbjkabfjkábjkfạknfjkábjkfạknf</p>
+                    `;
+          }
+        }
+
+        const resetButton = document.getElementById("resetButton");
+        resetButton.addEventListener("click", function () {
+          if (confirm("Are you sure you want to reset all your progress?")) {
+            for (let i = 1; i <= totalLessons; i++) {
+              localStorage.setItem(
+                `lesson${i}_results`,
+                JSON.stringify({ correct: 0, wrong: 0, status: "not-started" })
+              );
+            }
+            window.location.reload();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

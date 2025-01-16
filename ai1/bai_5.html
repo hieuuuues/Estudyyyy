@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz Website</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* CSS hoàn chỉnh */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+      }
+
+      /* Header Styles */
+      .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .back-arrow {
+        font-size: 20px;
+        color: #333;
+        cursor: pointer;
+      }
+
+      .logo {
+        height: 40px;
+        width: auto;
+      }
+
+      .brand-name {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2196f3;
+      }
+
+      .timer {
+        flex: 1;
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .timer.warning {
+        color: #f44336;
+      }
+
+      .header-right {
+        margin-left: auto;
+      }
+
+      /* Container and Sections */
+      .container {
+        display: flex;
+        min-height: calc(100vh - 60px);
+        flex-direction: row;
+        padding: 20px;
+        gap: 20px;
+        margin-top: 60px;
+      }
+
+      .reading-section {
+        flex: 1;
+        padding: 20px;
+        background: #f5f5f5;
+        border-radius: 10px;
+        overflow-y: auto;
+        height: calc(100vh - 80px);
+        position: sticky;
+        top: 80px;
+      }
+
+      .quiz-section {
+        flex: 1;
+        padding: 20px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
+        height: calc(100vh - 80px);
+      }
+
+      /* Question Styles */
+      .question {
+        margin-bottom: 30px;
+        padding: 20px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        background: #fff;
+        display: block !important;
+      }
+
+      .question h3 {
+        margin-bottom: 10px;
+        color: #2196f3;
+        font-size: 1.1em;
+      }
+
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .option {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+        margin-bottom: 8px;
+      }
+
+      .option:hover {
+        background: #f0f0f0;
+      }
+
+      .option.selected {
+        background: #e3f2fd;
+        border-color: #2196f3;
+      }
+
+      .option.correct {
+        background: #c8e6c9;
+        border-color: #4caf50;
+      }
+
+      .option.wrong {
+        background: #ffcdd2;
+        border-color: #f44336;
+      }
+
+      .explanation {
+        margin-top: 10px;
+        padding: 10px;
+        background: #e3f2fd;
+        border-radius: 5px;
+        display: none;
+      }
+
+      /* Controls */
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .btn-submit {
+        background: #2196f3;
+        color: white;
+        margin: 0;
+      }
+
+      .btn-reset {
+        background: #f44336;
+        color: white;
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        animation: fadeIn 0.3s ease;
+      }
+
+      .modal-content {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 500px;
+        position: relative;
+        animation: slideIn 0.3s ease;
+      }
+
+      .quiz-status {
+        margin: 20px 0;
+        padding: 15px;
+        background-color: #f5f5f5;
+        border-radius: 5px;
+      }
+
+      .status-item {
+        display: flex;
+        justify-content: space-between;
+        margin: 10px 0;
+        font-size: 16px;
+      }
+
+      .count {
+        font-weight: bold;
+        color: #2196f3;
+      }
+
+      .modal-message {
+        margin: 15px 0;
+        padding: 10px;
+        color: #f44336;
+        text-align: center;
+      }
+
+      .modal-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .btn-cancel {
+        background-color: grey;
+        color: white;
+      }
+
+      .btn-confirm {
+        background-color: #2196f3;
+        color: white;
+      }
+
+      .btn-confirm:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateY(-20px);
+        }
+        to {
+          transform: translateY(0);
+        }
+      }
+
+      /* Responsive Styles */
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+        }
+
+        .reading-section,
+        .quiz-section {
+          height: auto;
+          max-height: none;
+        }
+
+        .header {
+          padding: 0 10px;
+        }
+
+        .brand-name {
+          font-size: 18px;
+        }
+
+        .timer {
+          font-size: 20px;
+        }
+      }
+      /* Thêm vào phần CSS */
+      .question-navigator {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
+
+      .question-number {
+        width: 35px;
+        height: 35px;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: #fff;
+      }
+
+      .question-number:hover {
+        background: #e3f2fd;
+        border-color: #2196f3;
+      }
+
+      .question-number.answered {
+        background: #2196f3;
+        color: white;
+        border-color: #2196f3;
+      }
+
+      /* Điều chỉnh padding bottom cho container để tránh bị che bởi thanh navigator */
+      .container {
+        padding-bottom: 80px;
+      }
+
+      /* Điều chỉnh max-height cho quiz-section */
+      .quiz-section {
+        max-height: calc(100vh - 160px);
+      }
+      /* Sửa lại phần CSS cho responsive */
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+          margin-top: 60px;
+          padding-bottom: 80px; /* Để tránh bị che bởi thanh navigator */
+          height: auto;
+          overflow: visible;
+        }
+
+        .reading-section,
+        .quiz-section {
+          position: relative;
+          height: auto;
+          max-height: none;
+          overflow: visible;
+        }
+
+        .reading-section {
+          position: relative;
+          top: 0;
+        }
+
+        /* Điều chỉnh padding cho phần content */
+        .question {
+          margin-bottom: 20px;
+        }
+
+        /* Đảm bảo thanh navigator luôn ở dưới cùng */
+        .question-navigator {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: #fff;
+          z-index: 1000;
+        }
+
+        /* Thêm margin bottom cho container để tránh bị che bởi thanh navigator */
+        body {
+          padding-bottom: 70px;
+        }
+
+        /* Điều chỉnh scroll cho toàn bộ trang */
+        html,
+        body {
+          height: 100%;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch; /* Cho iOS */
+        }
+
+        /* Điều chỉnh kích thước nút trong navigator cho mobile */
+        .question-number {
+          width: 30px;
+          height: 30px;
+          font-size: 14px;
+        }
+      }
+      /* --------------nút back---------------------------------- */
+
+      .back-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #f0f0f0;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        margin-right: 15px;
+      }
+
+      .back-button i {
+        color: #2196f3;
+        font-size: 20px;
+        transition: all 0.3s ease;
+      }
+
+      /* Hiệu ứng hover */
+      .back-button:hover {
+        background: #2196f3;
+        transform: translateX(-3px);
+        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+      }
+
+      .back-button:hover i {
+        color: white;
+      }
+
+      /* Hiệu ứng click */
+      .back-button:active {
+        transform: translateX(-1px);
+        box-shadow: 0 1px 4px rgba(33, 150, 243, 0.2);
+      }
+
+      /* Điều chỉnh header left để căn chỉnh các phần tử */
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .back-button {
+          width: 35px;
+          height: 35px;
+          margin-right: 10px;
+        }
+
+        .back-button i {
+          font-size: 16px;
+        }
+      }
+      /* Selection Popup */
+      .selection-popup {
+        position: fixed;
+        display: none;
+        z-index: 9999;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        padding: 8px;
+        transform-origin: top center;
+        animation: popupAppear 0.2s ease;
+      }
+
+      .popup-content {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .highlight-btn {
+        width: 36px;
+        height: 36px;
+        border: none;
+        border-radius: 8px;
+        background: #ffffff;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        position: relative;
+      }
+
+      .highlight-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .highlight-btn:active {
+        transform: translateY(0);
+      }
+
+      .color-dot {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        transition: transform 0.2s ease;
+      }
+
+      .highlight-btn:hover .color-dot {
+        transform: scale(1.1);
+      }
+
+      .clear-highlight {
+        background: #f5f5f5;
+      }
+
+      .clear-highlight i {
+        font-size: 16px;
+        color: #666;
+      }
+
+      .clear-highlight:hover {
+        background: #ff4d4f;
+      }
+
+      .clear-highlight:hover i {
+        color: white;
+      }
+
+      /* Highlighted Text Styles */
+      .highlight-FFE08C {
+        background-color: #ffe08c;
+        border-radius: 3px;
+        padding: 0 2px;
+      }
+
+      .highlight-A8E6CF {
+        background-color: #a8e6cf;
+        border-radius: 3px;
+        padding: 0 2px;
+      }
+
+      .highlight-B8C0FF {
+        background-color: #b8c0ff;
+        border-radius: 3px;
+        padding: 0 2px;
+      }
+
+      .highlight-FFB4B4 {
+        background-color: #ffb4b4;
+        border-radius: 3px;
+        padding: 0 2px;
+      }
+
+      /* Animations */
+      @keyframes popupAppear {
+        from {
+          opacity: 0;
+          transform: translateY(5px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .highlight-btn {
+          width: 32px;
+          height: 32px;
+        }
+
+        .color-dot {
+          width: 20px;
+          height: 20px;
+        }
+
+        .clear-highlight i {
+          font-size: 14px;
+        }
+      }
+      /* Thêm vào phần style */
+      #quiz-results {
+        margin-top: 30px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      #quiz-results h3 {
+        color: #2196f3;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      .result-item {
+        padding: 20px;
+        text-align: center;
+        border-radius: 8px;
+        background: #f5f5f5;
+      }
+
+      .result-item span:first-child {
+        display: block;
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .result-item.correct span:first-child {
+        color: #4caf50;
+      }
+
+      .result-item.wrong span:first-child {
+        color: #f44336;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="header-left">
+        <a href="../lesson_1.html" class="back-button">
+          <i class="fas fa-chevron-left"></i>
+        </a>
+
+        <img src="./Remove-bg.ai_1734260849847.png" alt="Logo" class="logo" />
+        <span class="brand-name">Estudy</span>
+      </div>
+      <div class="timer" id="countdown">60:00</div>
+      <div class="header-right">
+        <button class="btn btn-reset">Làm lại</button>
+        <button class="btn btn-submit">Nộp bài</button>
+      </div>
+    </div>
+    <div class="container">
+      <div class="reading-section">
+        <h2>Nội dung bài đọc</h2>
+        <p>
+          It is a fairly common belief in Britain that men these days do more
+          housework than they did in previous generations. But is this really
+          so? A recent survey has (1) __________ some interesting discoveries.
+          When men do help out, they enjoy cooking and shopping but most are
+          unwilling to (2) __________ the washing. A quarter of men think that
+          women are better suited to looking after the home than men and 19%
+          admit to making no (3) __________ to housework. The average man says
+          he does a third of the housework, (4) __________ the average woman
+          says she does three-quarters of it, so someone isn't telling the
+          truth! It was impossible to find any men who shared housework equally
+          with their partners. Perhaps it isn't so (5) __________ that there are
+          some politicians who want a new law forcing men to do their share.
+        </p>
+        <!-- Thêm nhiều đoạn văn nữa ở đây -->
+      </div>
+
+      <div class="quiz-section">
+        <div class="question" data-id="1">
+          <h3>Câu hỏi 1:</h3>
+          <p>
+            Choose the best answer for the blank numbered (1) in the reading
+            passage.
+          </p>
+          <div class="options">
+            <div class="option" data-value="A">A. done</div>
+            <div class="option" data-value="B">B. made</div>
+            <div class="option" data-value="C">C. given</div>
+            <div class="option" data-value="D">D. found</div>
+          </div>
+          <div class="explanation">
+            Question: A recent survey has (1) __________ some interesting
+            discoveries.
+            <p>Answer: made</p>
+            <p>Lời giải: Make a discovery (np): khám phá</p>
+          </div>
+        </div>
+
+        <div class="question" data-id="2">
+          <h3>Câu hỏi 2:</h3>
+          <p>Việt Nam có bao nhiêu tỉnh thành?</p>
+          <div class="options">
+            <div class="option" data-value="A">A. 61</div>
+            <div class="option" data-value="B">B. 62</div>
+            <div class="option" data-value="C">C. 63</div>
+            <div class="option" data-value="D">D. 64</div>
+          </div>
+          <div class="explanation">
+            Việt Nam có 63 tỉnh thành phố trực thuộc trung ương.
+          </div>
+        </div>
+
+        <div class="question" data-id="3">
+          <h3>Câu hỏi 3:</h3>
+          <p>Đâu là thủ đô của Việt Nam?</p>
+          <div class="options">
+            <div class="option" data-value="A">A. Hà Nội</div>
+            <div class="option" data-value="B">B. Hồ Chí Minh</div>
+            <div class="option" data-value="C">C. Đà Nẵng</div>
+            <div class="option" data-value="D">D. Huế</div>
+          </div>
+          <div class="explanation">
+            DN là thủ đô của Việt Nam từ năm 1945 đến nay.
+          </div>
+        </div>
+        <div id="quiz-results" style="display: none">
+          <div class="results-container">
+            <h3>Kết quả bài làm</h3>
+            <div class="results-grid">
+              <div class="result-item correct">
+                <span id="correct-count">0</span>
+                <span>Số câu đúng</span>
+              </div>
+              <div class="result-item wrong">
+                <span id="wrong-count">0</span>
+                <span>Số câu sai</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="navigation"></div>
+    <!-- ------ cửa sổ nhỏ--------- -->
+    <div id="submitModal" class="modal">
+      <div class="modal-content">
+        <h2>Thông tin bài làm</h2>
+        <div class="quiz-status">
+          <div class="status-item">
+            <span>Số câu đã làm:</span>
+            <span id="answeredCount" class="count">0</span>
+          </div>
+          <div class="status-item">
+            <span>Số câu chưa làm:</span>
+            <span id="unansweredCount" class="count">0</span>
+          </div>
+        </div>
+        <div class="modal-message" id="modalMessage">
+          Vui lòng hoàn thành tất cả câu hỏi trước khi nộp bài!
+        </div>
+        <div class="modal-buttons">
+          <button class="btn btn-cancel" id="modalCancelBtn">
+            Quay lại làm bài
+          </button>
+          <button class="btn btn-confirm" id="modalSubmitBtn" disabled>
+            Nộp bài
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="question-navigator">
+      <!-- Sẽ được tạo động bằng JavaScript -->
+    </div>
+    <div id="selection-popup" class="selection-popup">
+      <div class="popup-content">
+        <button class="highlight-btn" data-color="#FFE08C">
+          <span class="color-dot" style="background-color: #ffe08c"></span>
+        </button>
+        <button class="highlight-btn" data-color="#A8E6CF">
+          <span class="color-dot" style="background-color: #a8e6cf"></span>
+        </button>
+        <button class="highlight-btn" data-color="#B8C0FF">
+          <span class="color-dot" style="background-color: #b8c0ff"></span>
+        </button>
+        <button class="highlight-btn" data-color="#FFB4B4">
+          <span class="color-dot" style="background-color: #ffb4b4"></span>
+        </button>
+        <button class="highlight-btn clear-highlight">
+          <i class="fas fa-eraser"></i>
+        </button>
+      </div>
+    </div>
+    <script>
+      // Xử lý highlight văn bản
+      document.addEventListener("DOMContentLoaded", function () {
+        const popup = document.getElementById("selection-popup");
+        const readingSection = document.querySelector(".reading-section");
+        const STORAGE_KEY = "user_highlights_hieuuuues"; // Thêm username vào key
+        let currentSelection = null;
+        let isHighlighting = false;
+
+        // Xử lý hiển thị popup khi select text
+        document.addEventListener("mouseup", function (e) {
+          if (isHighlighting) return;
+
+          const selection = window.getSelection();
+          const selectedText = selection.toString().trim();
+
+          if (!selectedText) {
+            popup.style.display = "none";
+            return;
+          }
+
+          // Kiểm tra xem có đang chọn trong vùng highlight không
+          const range = selection.getRangeAt(0);
+          const container = range.commonAncestorContainer;
+
+          // Chỉ cho phép highlight trong reading-section
+          if (!readingSection.contains(container)) {
+            return;
+          }
+
+          currentSelection = selection;
+
+          // Tính toán vị trí popup
+          const rect = range.getBoundingClientRect();
+          const popupHeight = popup.offsetHeight;
+          const popupWidth = popup.offsetWidth;
+
+          // Tính toán vị trí tốt nhất cho popup
+          let top = rect.top - popupHeight - 10;
+          let left = rect.left + rect.width / 2 - popupWidth / 2;
+
+          // Điều chỉnh vị trí nếu popup bị tràn ra ngoài màn hình
+          if (top < 0) {
+            top = rect.bottom + 10;
+          }
+          if (left < 10) {
+            left = 10;
+          } else if (left + popupWidth > window.innerWidth - 10) {
+            left = window.innerWidth - popupWidth - 10;
+          }
+
+          popup.style.display = "block";
+          popup.style.top = `${top + window.scrollY}px`;
+          popup.style.left = `${left}px`;
+        });
+
+        // Ẩn popup khi click ra ngoài
+        document.addEventListener("mousedown", function (e) {
+          if (!popup.contains(e.target)) {
+            popup.style.display = "none";
+          }
+        });
+
+        // Cải thiện chức năng xử lý highlight
+        document.querySelectorAll(".highlight-btn").forEach((button) => {
+          button.addEventListener("click", function () {
+            if (!currentSelection) return;
+
+            isHighlighting = true;
+            const range = currentSelection.getRangeAt(0);
+
+            if (this.classList.contains("clear-highlight")) {
+              // Cải thiện chức năng xóa highlight
+              removeHighlight(range);
+            } else {
+              // Thêm highlight mới
+              addHighlight(range, this.dataset.color);
+            }
+
+            // Ẩn popup và xóa selection
+            popup.style.display = "none";
+            currentSelection = null;
+            window.getSelection().removeAllRanges();
+            isHighlighting = false;
+
+            // Lưu trạng thái mới
+            saveHighlights();
+          });
+        });
+
+        // Cải thiện chức năng xóa highlight
+        function removeHighlight(range) {
+          const parentElement = range.commonAncestorContainer.parentElement;
+
+          // Kiểm tra nếu đang chọn một phần của highlight
+          if (
+            parentElement &&
+            parentElement.className.startsWith("highlight-")
+          ) {
+            // Xóa toàn bộ highlight
+            parentElement.outerHTML = parentElement.innerHTML;
+            return;
+          }
+
+          // Kiểm tra và xóa tất cả highlights trong vùng được chọn
+          const container = range.cloneContents();
+          const highlights = container.querySelectorAll(
+            'span[class^="highlight-"]'
+          );
+
+          if (highlights.length > 0) {
+            highlights.forEach((highlight) => {
+              // Tạo một text node mới với nội dung của highlight
+              const text = document.createTextNode(highlight.textContent);
+              highlight.parentNode.replaceChild(text, highlight);
+            });
+
+            // Cập nhật nội dung trong range
+            range.deleteContents();
+            range.insertNode(container);
+          }
+        }
+
+        // Thêm highlight mới
+        function addHighlight(range, color) {
+          const content = range.extractContents();
+          const span = document.createElement("span");
+          span.className = `highlight-${color.substring(1)}`;
+          span.appendChild(content);
+          range.insertNode(span);
+        }
+
+        // Lưu highlights
+        function saveHighlights() {
+          const highlightData = {
+            content: readingSection.innerHTML,
+            timestamp: new Date().toISOString(),
+            user: "hieuuuues",
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(highlightData));
+        }
+
+        // Load highlights
+        function loadHighlights() {
+          const savedData = localStorage.getItem(STORAGE_KEY);
+          if (savedData) {
+            try {
+              const { content, user } = JSON.parse(savedData);
+              if (user === "hieuuuues") {
+                readingSection.innerHTML = content;
+              }
+            } catch (error) {
+              console.error("Error loading highlights:", error);
+            }
+          }
+        }
+
+        // Reset tất cả highlights
+        function resetAllHighlights() {
+          const highlights = readingSection.querySelectorAll(
+            'span[class^="highlight-"]'
+          );
+          highlights.forEach((highlight) => {
+            highlight.outerHTML = highlight.innerHTML;
+          });
+          localStorage.removeItem(STORAGE_KEY);
+        }
+
+        // Thêm sự kiện reset vào nút reset
+        const resetBtns = document.querySelectorAll(".btn-reset");
+        resetBtns.forEach((btn) => {
+          btn.addEventListener("click", resetAllHighlights);
+        });
+
+        // Load highlights khi tải trang
+        loadHighlights();
+      });
+
+      // Xử lý câu hỏi và đồng hồ đếm ngược
+      document.addEventListener("DOMContentLoaded", function () {
+        const questions = document.querySelectorAll(".question");
+        const submitBtns = document.querySelectorAll(".btn-submit");
+        const resetBtns = document.querySelectorAll(".btn-reset");
+        const questionNavigator = document.querySelector(".question-navigator");
+        const modal = document.getElementById("submitModal");
+        const modalSubmitBtn = document.getElementById("modalSubmitBtn");
+        const modalCancelBtn = document.getElementById("modalCancelBtn");
+        const answeredCountElement = document.getElementById("answeredCount");
+        const unansweredCountElement =
+          document.getElementById("unansweredCount");
+
+        // Khởi tạo đáp án đúng
+        const correctAnswers = {
+          1: "A",
+          2: "C",
+          3: "C",
+        };
+
+        // Khởi tạo thanh điều hướng
+        function initializeNavigator() {
+          questions.forEach((_, index) => {
+            const numberButton = document.createElement("div");
+            numberButton.className = "question-number";
+            numberButton.textContent = index + 1;
+
+            // Kiểm tra nếu câu hỏi đã được trả lời
+            const question = questions[index];
+            if (question.querySelector(".option.selected")) {
+              numberButton.classList.add("answered");
+            }
+
+            // Thêm sự kiện click để scroll đến câu hỏi
+            numberButton.addEventListener("click", () => {
+              questions[index].scrollIntoView({ behavior: "smooth" });
+            });
+
+            questionNavigator.appendChild(numberButton);
+          });
+        }
+
+        // Xử lý chọn đáp án
+        function handleOptionClick(option) {
+          const questionElement = option.closest(".question");
+          const options = questionElement.querySelectorAll(".option");
+
+          // Bỏ chọn các option khác
+          options.forEach((opt) => opt.classList.remove("selected"));
+
+          // Chọn option hiện tại
+          option.classList.add("selected");
+
+          // Cập nhật trạng thái trong thanh điều hướng
+          const questionIndex = Array.from(questions).indexOf(questionElement);
+          const numberButton = questionNavigator.children[questionIndex];
+          if (numberButton) {
+            numberButton.classList.add("answered");
+          }
+        }
+
+        // Hiển thị modal submit
+        function showSubmitModal() {
+          const totalQuestions = questions.length;
+          const answeredQuestions = Array.from(questions).filter((question) =>
+            question.querySelector(".option.selected")
+          ).length;
+          const unansweredQuestions = totalQuestions - answeredQuestions;
+
+          answeredCountElement.textContent = answeredQuestions;
+          unansweredCountElement.textContent = unansweredQuestions;
+          modalSubmitBtn.disabled = unansweredQuestions > 0;
+          modal.style.display = "block";
+        }
+
+        // Xử lý submit bài làm
+        function handleSubmit() {
+          let correctCount = 0;
+          let wrongCount = 0;
+
+          questions.forEach((question) => {
+            const id = question.dataset.id;
+            const selectedOption = question.querySelector(".option.selected");
+            const explanation = question.querySelector(".explanation");
+
+            if (selectedOption) {
+              const isCorrect =
+                selectedOption.dataset.value === correctAnswers[id];
+              selectedOption.classList.add(isCorrect ? "correct" : "wrong");
+
+              // Đếm số câu đúng/sai
+              if (isCorrect) {
+                correctCount++;
+              } else {
+                wrongCount++;
+              }
+            }
+
+            explanation.style.display = "block";
+          });
+
+          // Lưu kết quả vào localStorage
+          const lessonNumber = getLessonNumber(); // Hàm để lấy số bài học từ URL hoặc data attribute
+          const lessonResults = {
+            correct: correctCount,
+            wrong: wrongCount,
+            status: "completed",
+          };
+          localStorage.setItem(
+            `lesson${lessonNumber}_results`,
+            JSON.stringify(lessonResults)
+          );
+
+          // Hiển thị kết quả
+          const resultsDiv = document.getElementById("quiz-results");
+          const correctCountDiv = document.getElementById("correct-count");
+          const wrongCountDiv = document.getElementById("wrong-count");
+
+          correctCountDiv.textContent = correctCount;
+          wrongCountDiv.textContent = wrongCount;
+          resultsDiv.style.display = "block";
+
+          // Scroll đến phần kết quả
+          resultsDiv.scrollIntoView({ behavior: "smooth" });
+
+          modal.style.display = "none";
+
+          // Log để debug
+          console.log("Correct:", correctCount, "Wrong:", wrongCount);
+        }
+
+        function getLessonNumber() {
+          // Lấy số bài học từ URL
+          const path = window.location.pathname;
+          const match = path.match(/lesson_?(\d+)/i);
+          return match ? match[1] : 5;
+        }
+        // Reset bài làm
+        function resetQuiz() {
+          questions.forEach((question) => {
+            const options = question.querySelectorAll(".option");
+            const explanation = question.querySelector(".explanation");
+
+            options.forEach((option) => {
+              option.classList.remove("selected", "correct", "wrong");
+            });
+
+            explanation.style.display = "none";
+          });
+
+          // Reset trạng thái của các nút số
+          document.querySelectorAll(".question-number").forEach((button) => {
+            button.classList.remove("answered");
+          });
+
+          // Ẩn kết quả
+          const resultsDiv = document.getElementById("quiz-results");
+          if (resultsDiv) {
+            resultsDiv.style.display = "none";
+          }
+
+          // Reset các giá trị đếm
+          const correctCountElement = document.getElementById("correct-count");
+          const wrongCountElement = document.getElementById("wrong-count");
+          if (correctCountElement) correctCountElement.textContent = "0";
+          if (wrongCountElement) wrongCountElement.textContent = "0";
+
+          // Reset modal state
+          modalSubmitBtn.disabled = true;
+          answeredCountElement.textContent = "0";
+          unansweredCountElement.textContent = questions.length;
+
+          // Scroll về câu hỏi đầu tiên
+          questions[0].scrollIntoView({ behavior: "smooth" });
+        }
+
+        // Thêm các event listeners
+        document.querySelectorAll(".option").forEach((option) => {
+          option.addEventListener("click", () => handleOptionClick(option));
+        });
+
+        submitBtns.forEach((btn) => {
+          btn.addEventListener("click", showSubmitModal);
+        });
+
+        resetBtns.forEach((btn) => {
+          btn.addEventListener("click", resetQuiz);
+        });
+
+        modalSubmitBtn.addEventListener("click", handleSubmit);
+
+        modalCancelBtn.addEventListener("click", () => {
+          modal.style.display = "none";
+        });
+
+        // Đóng modal khi click bên ngoài
+        window.onclick = function (event) {
+          if (event.target === modal) {
+            modal.style.display = "none";
+          }
+        };
+
+        // Back button
+        document
+          .querySelector(".back-button")
+          ?.addEventListener("click", function () {
+            window.history.back();
+          });
+
+        // Khởi tạo
+        initializeNavigator();
+
+        // Khởi tạo timer
+        const sixtyMinutes = 60 * 60;
+        const display = document.querySelector("#countdown");
+        startTimer(sixtyMinutes, display);
+      });
+
+      // Hàm khởi tạo và chạy đồng hồ đếm ngược
+      function startTimer(duration, display) {
+        let timer = duration;
+        let minutes, seconds;
+
+        const countdown = setInterval(function () {
+          minutes = parseInt(timer / 60, 10);
+          seconds = parseInt(timer % 60, 10);
+
+          minutes = minutes < 10 ? "0" + minutes : minutes;
+          seconds = seconds < 10 ? "0" + seconds : seconds;
+
+          display.textContent = minutes + ":" + seconds;
+
+          if (timer < 300) {
+            display.classList.add("warning");
+          }
+
+          if (--timer < 0) {
+            clearInterval(countdown);
+            display.textContent = "00:00";
+            showSubmitModal(); // Hiển thị modal khi hết giờ
+          }
+        }, 1000);
+      }
+    </script>
+  </body>
+</html>

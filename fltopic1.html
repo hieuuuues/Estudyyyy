@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flashcards Vocabulary</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <button class="back-button" id="backBtn">Back</button>
+      <h1>Flashcards Vocabulary</h1>
+    </header>
+    <div class="content">
+      <div class="position-indicator" id="positionIndicator">Card 1 of 5</div>
+      <div class="flashcard-container">
+        <div class="flashcard" id="flashcard">
+          <div class="front">
+            Hello
+            <button class="speak-button" id="speakBtn">🔊</button>
+          </div>
+          <div class="back">Xin chào</div>
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="button" id="prevBtn">← Previous</button>
+        <button class="button" id="nextBtn">Next →</button>
+      </div>
+    </div>
+    <script>
+      // JavaScript Logic
+      const flashcard = document.getElementById("flashcard");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const backBtn = document.getElementById("backBtn");
+      const speakBtn = document.getElementById("speakBtn");
+      const positionIndicator = document.getElementById("positionIndicator");
+
+      // Vocabulary data
+      const vocabulary = [
+        {
+          english: "Early bird",
+          ipa: "/ˈɜː.li ˌbɜːd/",
+          vietnamese: "Người thích dậy sớm",
+        },
+        {
+          english: "Morning person",
+          ipa: "/ˈmɔː.nɪŋˌpɜː.sən/",
+          vietnamese: "Người thường tỉnh táo vào buổi sáng",
+        },
+        { english: "Productive", ipa: "/prəˈdʌktɪv/", vietnamese: "Năng suất" },
+        {
+          english: "Night owl",
+          ipa: "/ˈnaɪt aʊl/",
+          vietnamese: "Cú đêm, người hay thức khuya",
+        },
+        { english: "Sleep in", ipa: "/sliːp ɪn/", vietnamese: "Ngủ nướng" },
+        {
+          english: "Put on make-up",
+          ipa: "/ˈpʊt ɒn ˈmeɪk ʌp/",
+          vietnamese: "Trang điểm",
+        },
+        {
+          english: "Put on clothes",
+          ipa: "/ˈpʊt ɒn kləʊðz/",
+          vietnamese: "Mặc quần áo",
+        },
+        {
+          english: "Do housework",
+          ipa: "/duːˈhaʊshəʊld ʧɔːz/",
+          vietnamese: "Làm việc nhà",
+        },
+        { english: "Sweep", ipa: "/swiːp/", vietnamese: "Quét dọn" },
+        { english: "Mop", ipa: "/mɒp/", vietnamese: "Lau dọn" },
+        {
+          english: "Take out the garbage",
+          ipa: "/teɪk aʊt ðəˈɡɑːbɪʤ/",
+          vietnamese: "Đi đổ rác",
+        },
+        {
+          english: "Fold clothes",
+          ipa: "/fəʊld kləʊðz/",
+          vietnamese: "Gấp quần áo",
+        },
+        {
+          english: "Put away clothes",
+          ipa: "/pʊt əˈweɪkləʊðz/",
+          vietnamese: "Cất quần áo",
+        },
+        { english: "Feed", ipa: "/fiːd/", vietnamese: "Cho ăn" },
+        {
+          english: "Feed pets",
+          ipa: "/fiːd pets/",
+          vietnamese: "Cho thú cưng ăn",
+        },
+        {
+          english: "Walk the dog",
+          ipa: "/wɔːk ðədɒɡ/",
+          vietnamese: "Dắt chó đi dạo",
+        },
+        {
+          english: "Go for a walk",
+          ipa: "/ɡəʊfɔːr əwɔːk/",
+          vietnamese: "Đi dạo",
+        },
+        {
+          english: "Go for a bike ride",
+          ipa: "/ɡəʊfɔːr əbaɪk raɪd/",
+          vietnamese: "Đi đạp xe",
+        },
+        { english: "Hit the gym", ipa: "/hɪt ðəʤɪm/", vietnamese: "Tập gym" },
+        { english: "Flexible", ipa: "/ˈfleksəbl/", vietnamese: "Linh hoạt" },
+        {
+          english: "Schedule",
+          ipa: "/ˈʃedjuːl/",
+          vietnamese: "Kế hoạch, lịch trình làm việc",
+        },
+        {
+          english: "Arrange",
+          ipa: "/əˈreɪndʒ/",
+          vietnamese: "Sắp xếp, lên kế hoạch",
+        },
+        { english: "Fixed", ipa: "/fɪkst/", vietnamese: "Cố định" },
+      ];
+
+      let currentIndex = 0;
+
+      function updateFlashcard() {
+        const { english, vietnamese } = vocabulary[currentIndex];
+        flashcard.querySelector(".front").textContent = english;
+        flashcard.querySelector(".back").textContent = vietnamese;
+        flashcard.querySelector(".front").appendChild(speakBtn); // Add the button to the front
+        positionIndicator.textContent = `Card ${currentIndex + 1} of ${
+          vocabulary.length
+        }`;
+      }
+
+      function playAudio(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+        speechSynthesis.speak(utterance);
+      }
+
+      speakBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent flipping when clicking the button
+        const englishWord = vocabulary[currentIndex].english;
+        playAudio(englishWord);
+      });
+
+      flashcard.addEventListener("click", () => {
+        flashcard.classList.toggle("is-flipped");
+      });
+
+      prevBtn.addEventListener("click", () => {
+        currentIndex =
+          (currentIndex - 1 + vocabulary.length) % vocabulary.length;
+        updateFlashcard();
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentIndex = (currentIndex + 1) % vocabulary.length;
+        updateFlashcard();
+      });
+
+      backBtn.addEventListener("click", () => {
+        window.history.back();
+      });
+
+      // Initialize the flashcard
+      updateFlashcard();
+    </script>
+  </body>
+</html>

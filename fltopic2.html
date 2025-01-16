@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flashcards Vocabulary</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <button class="back-button" id="backBtn">Back</button>
+      <h1>Flashcards Vocabulary</h1>
+    </header>
+    <div class="content">
+      <div class="position-indicator" id="positionIndicator">Card 1 of 5</div>
+      <div class="flashcard-container">
+        <div class="flashcard" id="flashcard">
+          <div class="front">
+            Hello
+            <button class="speak-button" id="speakBtn">🔊</button>
+          </div>
+          <div class="back">Xin chào</div>
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="button" id="prevBtn">← Previous</button>
+        <button class="button" id="nextBtn">Next →</button>
+      </div>
+    </div>
+    <script>
+      // JavaScript Logic
+      const flashcard = document.getElementById("flashcard");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const backBtn = document.getElementById("backBtn");
+      const speakBtn = document.getElementById("speakBtn");
+      const positionIndicator = document.getElementById("positionIndicator");
+
+      // Vocabulary data
+      const vocabulary = [
+        { english: "House", vietnamese: "Một tòa nhà (vật chất)" },
+        { english: "Home", vietnamese: "Mái ấm gia đình (tình cảm)" },
+        { english: "Accommodation", vietnamese: "Chỗ ở" },
+        { english: "Detached house", vietnamese: "Nhà biệt lập" },
+        { english: "Terraced house", vietnamese: "Nhà liền kề" },
+        { english: "Townhouse", vietnamese: "Nhà liền kề" },
+        { english: "Dormitory", vietnamese: "Ký túc xá" },
+        { english: "Dorm", vietnamese: "Ký túc xá" },
+        { english: "Rented", vietnamese: "Thuê" },
+        { english: "Apartment", vietnamese: "Căn hộ, chung cư" },
+        { english: "Flat", vietnamese: "Căn hộ, chung cư" },
+        { english: "Floor", vietnamese: "Tầng" },
+        { english: "Storey", vietnamese: "Tầng" },
+        { english: "Bungalow", vietnamese: "Nhà trệt (1 tầng)" },
+        { english: "Duplex", vietnamese: "(Nhà/căn hộ) 2 tầng" },
+        { english: "Condo", vietnamese: "Căn hộ, chung cư" },
+        { english: "Beachfront", vietnamese: "Hướng ra biển" },
+        {
+          english: "Studio apartment",
+          vietnamese: "Căn hộ studio (căn hộ một phòng)",
+        },
+        { english: "Penthouse", vietnamese: "Căn hộ penthouse" },
+        { english: "Luxurious", vietnamese: "Xa hoa, lộng lẫy" },
+        { english: "Skyscraper", vietnamese: "Tòa nhà chọc trời" },
+        { english: "Spacious", vietnamese: "Rộng lớn" },
+        { english: "Overlook", vietnamese: "Nhìn từ cao xuống" },
+        { english: "Tidy and neat", vietnamese: "Sạch sẽ và gọn gàng" },
+        { english: "Furnished", vietnamese: "Có sẵn đồ đạc" },
+        { english: "Cozy", vietnamese: "Ấm cúng" },
+        { english: "Cramped", vietnamese: "Chật hẹp" },
+        { english: "Noisy", vietnamese: "Ồn ào" },
+      ];
+
+      let currentIndex = 0;
+
+      function updateFlashcard() {
+        const { english, vietnamese } = vocabulary[currentIndex];
+        flashcard.querySelector(".front").textContent = english;
+        flashcard.querySelector(".back").textContent = vietnamese;
+        flashcard.querySelector(".front").appendChild(speakBtn); // Add the button to the front
+        positionIndicator.textContent = `Card ${currentIndex + 1} of ${
+          vocabulary.length
+        }`;
+      }
+
+      function playAudio(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+        speechSynthesis.speak(utterance);
+      }
+
+      speakBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent flipping when clicking the button
+        const englishWord = vocabulary[currentIndex].english;
+        playAudio(englishWord);
+      });
+
+      flashcard.addEventListener("click", () => {
+        flashcard.classList.toggle("is-flipped");
+      });
+
+      prevBtn.addEventListener("click", () => {
+        currentIndex =
+          (currentIndex - 1 + vocabulary.length) % vocabulary.length;
+        updateFlashcard();
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentIndex = (currentIndex + 1) % vocabulary.length;
+        updateFlashcard();
+      });
+
+      backBtn.addEventListener("click", () => {
+        window.history.back();
+      });
+
+      // Initialize the flashcard
+      updateFlashcard();
+    </script>
+  </body>
+</html>
